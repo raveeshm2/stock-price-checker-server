@@ -18,7 +18,7 @@ export const getCookie: () => Promise<NSEcookie> = async () => {
     console.log('Getting new set of Cookies');
     let response: any;
     try {
-        response = await Axios.get('https://www.nseindia.com');
+        response = await Axios.get('http://www.nseindia.com');
     } catch (err) {
         console.log('Error fetching cookie', err);
     }
