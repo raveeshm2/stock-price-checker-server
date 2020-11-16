@@ -29,6 +29,7 @@ export const getCookie: () => Promise<NSEcookie> = async () => {
             ...cookie.parse(cook)
         }
     }, {});
+    console.log('Cookies received', parsed);
     return {
         nsit: parsed.nsit,
         nseappid: parsed.nseappid
