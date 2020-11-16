@@ -1,7 +1,7 @@
 import Axios from "axios";
 import cookie from "cookie";
 import cron from 'node-cron';
-import { userModel } from "../db/models";
+import { globalModel, userModel } from "../db/models";
 import { SubScriptionModel } from "../db/schema/user";
 import { getStockPriceWithErrorHandler } from "./../routes/stock";
 import webPush, { isStockMarketOpen } from "../utils";
@@ -16,9 +16,7 @@ const commonHeaders = {
     'accept': '*/*',
     'X-Requested-With': 'XMLHttpRequest',
     'accept-Encoding': 'gzip, deflate, br',
-    'accept-language': 'en-US,en;q=0.9',
     'Connection': 'keep-alive',
-    'referer': 'https://www.nseindia.com/',
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
@@ -40,6 +38,14 @@ export const getCookie: () => Promise<NSEcookie> = async () => {
     } catch (err) {
         console.log('Error fetching cookie ', new Date().toLocaleTimeString());
         console.log('err', err);
+        // Testing purpose
+        const globalObject = await globalModel.findOne({});
+        if (globalObject && globalObject.nsit && globalObject.nseappid) {
+            return {
+                nsit: globalObject.nsit,
+                nseappid: globalObject.nseappid
+            }
+        }
     }
 
     const cookies: string[] = response.headers['set-cookie'];
