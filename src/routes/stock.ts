@@ -8,9 +8,9 @@ import { isStockMarketOpen } from '../utils';
 const router = express.Router();
 let cookies: NSEcookie | null = null;
 
-// (async function () {
-//     cookies = await getCookie();
-// })();
+(async function () {
+    cookies = await getCookie();
+})();
 
 export async function getStockPriceWithErrorHandler(symbol: string): Promise<any> {
     try {
