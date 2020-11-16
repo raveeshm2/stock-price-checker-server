@@ -16,12 +16,18 @@ let cronGlobal: cron.ScheduledTask | null = null;
 
 export const getCookie: () => Promise<NSEcookie> = async () => {
     console.log('Getting new set of Cookies');
-    const response = await Axios.get('https://www.nseindia.com', {
-        headers: {
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive'
-        }
-    });
+    let response: any;
+    try {
+        response = await Axios.get('https://www.nseindia.com', {
+            headers: {
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive'
+            }
+        });
+    } catch (err) {
+        console.log('Error fetching cookie', err);
+    }
+
     const cookies: string[] = response.headers['set-cookie'];
     const parsed: any = cookies.reduce((acc, cook) => {
         return {
