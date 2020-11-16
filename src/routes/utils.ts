@@ -26,15 +26,6 @@ let cronGlobal: cron.ScheduledTask | null = null;
 
 export const getCookie: () => Promise<NSEcookie> = async () => {
     console.log('Getting new set of Cookies');
-    // Testing purpose
-    const globalObject = await globalModel.findOne({});
-    if (globalObject && globalObject.nsit && globalObject.nseappid) {
-        console.log('Reading cookies from DB');
-        return {
-            nsit: globalObject.nsit,
-            nseappid: globalObject.nseappid
-        }
-    }
     let response: any;
     try {
         response = await Axios.get('https://www.nseindia.com', {
