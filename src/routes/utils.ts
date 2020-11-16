@@ -13,7 +13,7 @@ export type NSEcookie = {
 }
 
 const commonHeaders = {
-    'X-Requested-With': 'XMLHttpRequest',
+    // 'X-Requested-With': 'XMLHttpRequest',
     'accept-Encoding': 'gzip, deflate, br',
     'Connection': 'keep-alive',
 }
