@@ -18,6 +18,7 @@ export async function getStockPriceWithErrorHandler(symbol: string): Promise<any
         return await getStockPrice(symbol, cookies!);
     } catch (err) {
         // Second try - Most likely cookie got expired so try once more with new cookie
+        console.log('Err fetching price', err);
         try {
             cookies = await getCookie();
             return await getStockPrice(symbol, cookies!);
