@@ -23,7 +23,13 @@ export const getCookie: () => Promise<NSEcookie> = async () => {
                 'accept': '*/*',
                 'X-Requested-With': 'XMLHttpRequest',
                 'accept-Encoding': 'gzip, deflate, br',
+                'accept-language': 'en-US,en;q=0.9',
                 'Connection': 'keep-alive',
+                'referer': 'https://www.nseindia.com/',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'same-origin',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
             },
             withCredentials: true
         });
@@ -51,7 +57,13 @@ export const getStockPrice: (symbol: string, cookies: NSEcookie) => Promise<stri
             'accept': '*/*',
             'X-Requested-With': 'XMLHttpRequest',
             'accept-Encoding': 'gzip, deflate, br',
+            'accept-language': 'en-US,en;q=0.9',
             'Connection': 'keep-alive',
+            'referer': 'https://www.nseindia.com/',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36',
             cookie: `nsit=${cookies!.nsit}; nseappid=${cookies!.nseappid}`
         },
         withCredentials: true
@@ -66,7 +78,13 @@ export const getStockSymbol: (stockName: string, cookies: NSEcookie) => Promise<
             'accept': '*/*',
             'X-Requested-With': 'XMLHttpRequest',
             'accept-Encoding': 'gzip, deflate, br',
+            'accept-language': 'en-US,en;q=0.9',
             'Connection': 'keep-alive',
+            'referer': 'https://www.nseindia.com/',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36',
             cookie: `nsit=${cookies!.nsit}; nseappid=${cookies!.nseappid}`
         },
         withCredentials: true
