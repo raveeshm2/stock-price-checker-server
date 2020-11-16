@@ -15,10 +15,7 @@ export type NSEcookie = {
 const commonHeaders = {
     'X-Requested-With': 'XMLHttpRequest',
     'accept-Encoding': 'gzip, deflate, br',
-    'accept-language': 'en-US,en;q=0.9',
     'Connection': 'keep-alive',
-    'referer': 'https://www.nseindia.com/',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
 }
 
 let cronGlobal: cron.ScheduledTask | null = null;
