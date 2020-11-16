@@ -21,6 +21,7 @@ export const getCookie: () => Promise<NSEcookie> = async () => {
         response = await Axios.get('https://www.nseindia.com', {
             headers: {
                 'accept': '*/*',
+                'X-Requested-With': 'XMLHttpRequest',
                 'accept-Encoding': 'gzip, deflate, br',
                 'accept-language': 'en-US,en;q=0.9',
                 'if-none-match': 'W/"49f-175656c70d8"',
@@ -30,7 +31,8 @@ export const getCookie: () => Promise<NSEcookie> = async () => {
                 'sec-fetch-mode': 'cors',
                 'sec-fetch-site': 'same-origin',
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
-            }
+            },
+            withCredentials: true
         });
     } catch (err) {
         console.log('Error fetching cookie', err);
