@@ -31,7 +31,7 @@ export const getCookie: () => Promise<NSEcookie> = async () => {
             headers: {
                 ...commonHeaders
             },
-            withCredentials: true
+            // withCredentials: true
         });
     } catch (err) {
         console.log('Error fetching cookie ', new Date().toLocaleTimeString());
