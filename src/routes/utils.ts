@@ -13,10 +13,10 @@ export type NSEcookie = {
 }
 
 const commonHeaders = {
+    'accept': '*/*',
     'X-Requested-With': 'XMLHttpRequest',
     'accept-Encoding': 'gzip, deflate, br',
     'Connection': 'keep-alive',
-    'referer': 'https://www.nseindia.com/',
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
