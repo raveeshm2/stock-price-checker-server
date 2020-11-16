@@ -15,7 +15,6 @@ export type NSEcookie = {
 const commonHeaders = {
     'accept': '*/*',
     'X-Requested-With': 'XMLHttpRequest',
-    'accept-Encoding': 'gzip, deflate, br',
     'connection': 'keep-alive',
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
