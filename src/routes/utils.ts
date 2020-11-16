@@ -13,12 +13,9 @@ export type NSEcookie = {
 }
 
 const commonHeaders = {
-    'accept': '*/*',
+    //  'accept': '*/*',
     'X-Requested-With': 'XMLHttpRequest',
-    'connection': 'keep-alive',
-    'sec-fetch-dest': 'empty',
-    'sec-fetch-mode': 'cors',
-    'sec-fetch-site': 'same-origin'
+    // 'accept-Encoding': 'gzip, deflate, br'
 }
 
 let cronGlobal: cron.ScheduledTask | null = null;
@@ -31,7 +28,7 @@ export const getCookie: () => Promise<NSEcookie> = async () => {
             headers: {
                 ...commonHeaders
             },
-            // withCredentials: true
+            withCredentials: true
         });
     } catch (err) {
         console.log('Error fetching cookie ', new Date().toLocaleTimeString());
