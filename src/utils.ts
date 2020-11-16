@@ -25,7 +25,7 @@ export function isStockMarketOpen(): boolean {
     const currentHour = localMoment.hour();
     const currentMinutes = localMoment.minute();
 
-    if (currentDay >= 1 && currentDay <= 5 && currentHour >= 9 && currentHour <= 16) {
+    if (currentDay >= 1 && currentDay <= 5 && currentHour >= 9 && currentHour <= 17) {
         return true;
     }
     return false;
