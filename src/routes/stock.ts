@@ -20,8 +20,10 @@ export async function getStockPriceWithErrorHandler(symbol: string): Promise<any
         // Second try - Most likely cookie got expired so try once more with new cookie
         console.log('Err fetching price', err);
         try {
-            cookies = await getCookie(); // Function may return null cookie if cookie fetching is already in progress
-            if (cookies) {
+            const tempCookie = await getCookie(); // Function may return null cookie if cookie fetching is already in progress
+
+            if (tempCookie) {
+                cookies = tempCookie;
                 return await getStockPrice(symbol, cookies!);
             } else {
                 return { error: `Unable to retrieve info for ${symbol}` }
@@ -59,9 +61,10 @@ router.get('/search', async (req, res, next) => {
         return res.send(processedData);
     } catch (err) {
         // Most likely cookie got expired so try once more with new cookie
-        cookies = await getCookie(); // Function may return null cookie if cookie fetching is already in progress
+        const tempCookie = await getCookie(); // Function may return null cookie if cookie fetching is already in progress
         try {
-            if (cookies) {
+            if (tempCookie) {
+                cookies = tempCookie;
                 const symbols = await getStockSymbol(stockName, cookies!);
                 const processedData = symbols.map((stock: any) => {
                     return { symbol: stock.symbol, name: stock.symbol_info }
