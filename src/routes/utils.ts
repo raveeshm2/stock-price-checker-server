@@ -1,7 +1,7 @@
 import Axios from "axios";
 import cookie from "cookie";
 import cron from 'node-cron';
-import { globalModel, userModel } from "../db/models";
+import { userModel } from "../db/models";
 import { SubScriptionModel } from "../db/schema/user";
 import { getStockPriceWithErrorHandler } from "./../routes/stock";
 import webPush, { isStockMarketOpen } from "../utils";
@@ -27,8 +27,15 @@ const commonHeaders = {
 
 let cronGlobal: cron.ScheduledTask | null = null;
 
-export const getCookie: () => Promise<NSEcookie> = async () => {
+// GLobal variable to stop fetching multiple cookies at the same time
+let lastFetched: Date | null = null;
+
+export const getCookie: () => Promise<NSEcookie | null> = async () => {
     console.log('Getting new set of Cookies');
+    const current = new Date();
+    if (lastFetched && ((current as any) - (lastFetched as any) < 60 * 1000)) // Retry new cookie every minute
+        return null;
+    lastFetched = new Date();
     let response: any;
     try {
         response = await Axios.get('https://www.nseindia.com', {
@@ -40,17 +47,8 @@ export const getCookie: () => Promise<NSEcookie> = async () => {
     } catch (err) {
         console.log('Error fetching cookie ', new Date().toLocaleTimeString());
         console.log('err', err);
-        // Testing purpose
-        const globalObject = await globalModel.findOne({});
-        if (globalObject && globalObject.nsit && globalObject.nseappid) {
-            console.log('Reading cookies from DB');
-            return {
-                nsit: globalObject.nsit,
-                nseappid: globalObject.nseappid
-            }
-        }
+        return null;
     }
-
     const cookies: string[] = response.headers['set-cookie'];
     const parsed: any = cookies.reduce((acc, cook) => {
         return {
@@ -119,7 +117,9 @@ export function HandleCRONJob() {
 
 export function enableCronJob(format: string) {
     return cron.schedule(format, async () => {
-        console.log("Running Cron Job at", new Date().toLocaleTimeString());
+        // Get UTC day, hours and time to schedule a cron job. Convert to Indian Time
+        const localMoment = moment().utcOffset("+05:30");
+        console.log("Running Cron Job at", localMoment.toISOString());
 
         // Get all users and trigger notifications for successful target hit
         const users = await userModel.find({});

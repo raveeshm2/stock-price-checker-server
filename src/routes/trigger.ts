@@ -21,7 +21,7 @@ router.post('/add', async (req, res, next) => {
         user.trigger = [{ id: mongoose.Types.ObjectId(), symbol, type, price, isTriggered: false, triggeredAt: null }];
     } else {
         const triggers = [...user.trigger];
-        const duplicate = triggers.find(trigger => trigger.symbol === symbol && trigger.type === type && trigger.price === price);
+        const duplicate = triggers.find(trigger => trigger.symbol === symbol && trigger.type === type && trigger.price === price && trigger.isTriggered === true);
         if (duplicate) { return next(new Error("Stock Trigger already active.")); }
         triggers.push({ id: mongoose.Types.ObjectId(), symbol, type, price, isTriggered: false, triggeredAt: null });
         user.trigger = triggers;

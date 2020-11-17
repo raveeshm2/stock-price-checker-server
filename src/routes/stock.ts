@@ -20,8 +20,13 @@ export async function getStockPriceWithErrorHandler(symbol: string): Promise<any
         // Second try - Most likely cookie got expired so try once more with new cookie
         console.log('Err fetching price', err);
         try {
-            cookies = await getCookie();
-            return await getStockPrice(symbol, cookies!);
+            cookies = await getCookie(); // Function may return null cookie if cookie fetching is already in progress
+            if (cookies) {
+                return await getStockPrice(symbol, cookies!);
+            } else {
+                return { error: `Unable to retrieve info for ${symbol}` }
+            }
+
         } catch (err) {
             // Generic Error Catch
             return { error: `Unable to retrieve info for ${symbol}` }
@@ -54,14 +59,17 @@ router.get('/search', async (req, res, next) => {
         return res.send(processedData);
     } catch (err) {
         // Most likely cookie got expired so try once more with new cookie
-        cookies = await getCookie();
+        cookies = await getCookie(); // Function may return null cookie if cookie fetching is already in progress
         try {
-            const symbols = await getStockSymbol(stockName, cookies!);
-            const processedData = symbols.map((stock: any) => {
-                return { symbol: stock.symbol, name: stock.symbol_info }
-            });
-            //console.log('process', processedData);
-            return res.send(processedData);
+            if (cookies) {
+                const symbols = await getStockSymbol(stockName, cookies!);
+                const processedData = symbols.map((stock: any) => {
+                    return { symbol: stock.symbol, name: stock.symbol_info }
+                });
+                return res.send(processedData);
+            } else {
+                return next(new Error("Request failed. Please try again later"));
+            }
         } catch (err) {
             return next(new Error("Request failed. Please try again later"));
         }
