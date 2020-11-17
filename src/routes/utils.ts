@@ -33,8 +33,11 @@ let lastFetched: Date | null = null;
 export const getCookie: () => Promise<NSEcookie | null> = async () => {
     console.log('Getting new set of Cookies');
     const current = new Date();
-    if (lastFetched && ((current as any) - (lastFetched as any) < 60 * 1000)) // Retry new cookie every minute
+    if (lastFetched && ((current as any) - (lastFetched as any) < 60 * 1000)) { // Retry new cookie every minute
+        console.log('Cookie fetch already in progress');
         return null;
+    }
+
     lastFetched = new Date();
     let response: any;
     try {
