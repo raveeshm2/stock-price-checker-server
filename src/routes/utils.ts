@@ -24,6 +24,22 @@ export type NSEcookie = {
     nseappid: string
 }
 
+const userHeaders = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64; rv:82.0) Gecko/20100101 Firefox/82.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
+    'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:82.0) Gecko/20100101 Firefox/82.0',
+    'Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:81.0) Gecko/20100101 Firefox/81.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:82.0) Gecko/20100101 Firefox/82.0'
+]
+
 const commonHeaders = {
     'Accept': '*/*',
     'X-Requested-With': 'XMLHttpRequest',
@@ -37,13 +53,15 @@ const commonHeaders = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
 }
 
+let randomHeader: null | string = null;
+
 let cronGlobal: cron.ScheduledTask | null = null;
 
 // GLobal variable to stop fetching multiple cookies at the same time
 let lastFetched: Date | null = null;
 
 export const getCookie: () => Promise<NSEcookie | null> = async () => {
-    console.log('Getting new set of Cookies 2');
+    console.log('Getting new set of Cookies 1');
     const current = new Date();
     if (lastFetched && ((current as any) - (lastFetched as any) < 60 * 1000)) { // Retry new cookie every minute
         console.log('Cookie fetch already in progress');
@@ -52,6 +70,7 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
 
     lastFetched = new Date();
     let response: any;
+    randomHeader = userHeaders[Math.floor(Math.random() * Math.floor(userHeaders.length))];
     try {
         // response = await fetch('https://www.nseindia.com', {
         //     headers: { ...commonHeaders, credentials: 'include' },
@@ -61,7 +80,8 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
         // Axios Request
         response = await Axios.get('https://www.nseindia.com', {
             headers: {
-                ...commonHeaders
+                ...commonHeaders,
+                'User-Agent': randomHeader
             },
             withCredentials: true,
             httpsAgent: agent,
@@ -104,6 +124,7 @@ export const getStockPrice: (symbol: string, cookies: NSEcookie) => Promise<stri
     const stock = await Axios.get(`https://www.nseindia.com/api/quote-equity?symbol=${symbol}`, {
         headers: {
             ...commonHeaders,
+            'User-Agent': randomHeader,
             cookie: `nsit=${cookies!.nsit}; nseappid=${cookies!.nseappid}`
         },
         withCredentials: true
@@ -116,6 +137,7 @@ export const getStockSymbol: (stockName: string, cookies: NSEcookie) => Promise<
     const stock = await Axios.get(`https://www.nseindia.com/api/search/autocomplete?q=${stockName}`, {
         headers: {
             ...commonHeaders,
+            'User-Agent': randomHeader,
             cookie: `nsit=${cookies!.nsit}; nseappid=${cookies!.nseappid}`
         },
         withCredentials: true
