@@ -7,19 +7,12 @@ import webPush, { isStockMarketOpen } from "../utils";
 import moment from "moment";
 import https from "https";
 import cookie from "cookie";
-// @ts-ignore
-import curl from "curlrequest";
+import axiosCookieJarSupport from 'axios-cookiejar-support';
+import tough from 'tough-cookie';
 
-var options = { url: 'https://www.nseindia.com', include: true };
+axiosCookieJarSupport(Axios);
 
-curl.request(options, function (err: any, parts: any) {
-    parts = parts.split('\r\n');
-    var data = parts.pop()
-        , head = parts.pop();
-    console.log('parts', parts);
-    console.log('data', data);
-    console.log('head', head);
-});
+const cookieJar = new tough.CookieJar();
 
 // At request level
 const agent = new https.Agent({
@@ -35,8 +28,8 @@ const commonHeaders = {
     'Accept': '*/*',
     'X-Requested-With': 'XMLHttpRequest',
     'Accept-Encoding': 'gzip, deflate, br',
-    'Accept-language': 'en-US,en;q=0.9',
-    'Connection': 'keep-alive',
+    'Accept-Language': 'en-US,*',
+    'Connection': 'Keep-Alive',
     'Referer': 'https://www.nseindia.com/',
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
@@ -71,7 +64,8 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
                 ...commonHeaders
             },
             withCredentials: true,
-            httpsAgent: agent
+            httpsAgent: agent,
+            jar: cookieJar
         });
     } catch (err) {
         console.log('Error fetching cookie ', new Date().toLocaleTimeString());
