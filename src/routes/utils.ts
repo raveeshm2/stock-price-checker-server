@@ -5,7 +5,6 @@ import { SubScriptionModel } from "../db/schema/user";
 import { getStockPriceWithErrorHandler } from "./../routes/stock";
 import webPush, { isStockMarketOpen } from "../utils";
 import moment from "moment";
-import fetch from "node-fetch";
 import https from "https";
 import cookie from "cookie";
 
