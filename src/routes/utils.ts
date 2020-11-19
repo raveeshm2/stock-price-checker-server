@@ -6,6 +6,7 @@ import { SubScriptionModel } from "../db/schema/user";
 import { getStockPriceWithErrorHandler } from "./../routes/stock";
 import webPush, { isStockMarketOpen } from "../utils";
 import moment from "moment";
+import fetch from "node-fetch";
 
 export type NSEcookie = {
     nsit: string,
@@ -41,29 +42,48 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
     lastFetched = new Date();
     let response: any;
     try {
-        response = await Axios.get('https://www.nseindia.com', {
-            headers: {
-                ...commonHeaders
-            },
-            withCredentials: true
+        response = await fetch('https://www.nseindia.com', {
+            headers: { ...commonHeaders, credentials: 'include' },
+            method: 'GET',
         });
+
+        // Axios Request
+        // response = await Axios.get('https://www.nseindia.com', {
+        //     headers: {
+        //         ...commonHeaders
+        //     },
+        //     withCredentials: true
+        // });
     } catch (err) {
         console.log('Error fetching cookie ', new Date().toLocaleTimeString());
         console.log('err', err);
         return null;
     }
-    const cookies: string[] = response.headers['set-cookie'];
-    const parsed: any = cookies.reduce((acc, cook) => {
-        return {
-            ...acc,
-            ...cookie.parse(cook)
-        }
-    }, {});
-    console.log('Cookies received', parsed);
+
+    // Axios parsing
+    // const cookies: string[] = response.headers['set-cookie'];
+    // const parsed: any = cookies.reduce((acc, cook) => {
+    //     return {
+    //         ...acc,
+    //         ...cookie.parse(cook)
+    //     }
+    // }, {});
+    //console.log('Cookies received', parsed);
+    // return {
+    //     nsit: parsed.nsit,
+    //     nseappid: parsed.nseappid
+    // }
+
+    const testCookie = response.headers.get('set-cookie');
+    const nsit = testCookie.split('nsit=')[1].split(';')[0];
+    const nseappid = testCookie.split('nseappid=')[1].split(';')[0];
+    console.log('Cookie received nsit', nsit);
+    console.log('Cookie received nseappid', nseappid);
     return {
-        nsit: parsed.nsit,
-        nseappid: parsed.nseappid
+        nsit,
+        nseappid
     }
+
 }
 
 export const getStockPrice: (symbol: string, cookies: NSEcookie) => Promise<string> = async (symbol: string, cookies: NSEcookie) => {
