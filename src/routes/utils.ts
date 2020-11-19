@@ -7,6 +7,19 @@ import webPush, { isStockMarketOpen } from "../utils";
 import moment from "moment";
 import https from "https";
 import cookie from "cookie";
+// @ts-ignore
+import curl from "curlrequest";
+
+var options = { url: 'https://www.nseindia.com', include: true };
+
+curl.request(options, function (err: any, parts: any) {
+    parts = parts.split('\r\n');
+    var data = parts.pop()
+        , head = parts.pop();
+    console.log('parts', parts);
+    console.log('data', data);
+    console.log('head', head);
+});
 
 // At request level
 const agent = new https.Agent({
