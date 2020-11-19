@@ -73,7 +73,7 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
     //     nsit: parsed.nsit,
     //     nseappid: parsed.nseappid
     // }
-
+    console.log('headers', response.headers);
     const testCookie = response.headers.get('set-cookie');
     const nsit = testCookie.split('nsit=')[1].split(';')[0];
     const nseappid = testCookie.split('nseappid=')[1].split(';')[0];
