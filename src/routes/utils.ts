@@ -1,5 +1,4 @@
 import Axios from "axios";
-import cookie from "cookie";
 import cron from 'node-cron';
 import { userModel } from "../db/models";
 import { SubScriptionModel } from "../db/schema/user";
@@ -7,6 +6,13 @@ import { getStockPriceWithErrorHandler } from "./../routes/stock";
 import webPush, { isStockMarketOpen } from "../utils";
 import moment from "moment";
 import fetch from "node-fetch";
+import https from "https";
+import cookie from "cookie";
+
+// At request level
+const agent = new https.Agent({
+    rejectUnauthorized: false
+});
 
 export type NSEcookie = {
     nsit: string,
@@ -42,47 +48,49 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
     lastFetched = new Date();
     let response: any;
     try {
-        response = await fetch('https://www.nseindia.com', {
-            headers: { ...commonHeaders, credentials: 'include' },
-            method: 'GET',
-        });
+        // response = await fetch('https://www.nseindia.com', {
+        //     headers: { ...commonHeaders, credentials: 'include' },
+        //     method: 'GET',
+        // });
 
         // Axios Request
-        // response = await Axios.get('https://www.nseindia.com', {
-        //     headers: {
-        //         ...commonHeaders
-        //     },
-        //     withCredentials: true
-        // });
+        response = await Axios.get('https://www.nseindia.com', {
+            headers: {
+                ...commonHeaders
+            },
+            withCredentials: true,
+            httpsAgent: agent
+        });
     } catch (err) {
         console.log('Error fetching cookie ', new Date().toLocaleTimeString());
         console.log('err', err);
         return null;
     }
 
-    // Axios parsing
-    // const cookies: string[] = response.headers['set-cookie'];
-    // const parsed: any = cookies.reduce((acc, cook) => {
-    //     return {
-    //         ...acc,
-    //         ...cookie.parse(cook)
-    //     }
-    // }, {});
-    //console.log('Cookies received', parsed);
-    // return {
-    //     nsit: parsed.nsit,
-    //     nseappid: parsed.nseappid
-    // }
-    console.log('headers', response.headers);
-    const testCookie = response.headers.get('set-cookie');
-    const nsit = testCookie.split('nsit=')[1].split(';')[0];
-    const nseappid = testCookie.split('nseappid=')[1].split(';')[0];
-    console.log('Cookie received nsit', nsit);
-    console.log('Cookie received nseappid', nseappid);
+    //Axios parsing
+    const cookies: string[] = response.headers['set-cookie'];
+    const parsed: any = cookies.reduce((acc, cook) => {
+        return {
+            ...acc,
+            ...cookie.parse(cook)
+        }
+    }, {});
+    console.log('Cookies received', parsed);
     return {
-        nsit,
-        nseappid
+        nsit: parsed.nsit,
+        nseappid: parsed.nseappid
     }
+
+    // console.log('headers', response.headers);
+    // const testCookie = response.headers.get('set-cookie');
+    // const nsit = testCookie.split('nsit=')[1].split(';')[0];
+    // const nseappid = testCookie.split('nseappid=')[1].split(';')[0];
+    // console.log('Cookie received nsit', nsit);
+    // console.log('Cookie received nseappid', nseappid);
+    // return {
+    //     nsit,
+    //     nseappid
+    // }
 
 }
 
