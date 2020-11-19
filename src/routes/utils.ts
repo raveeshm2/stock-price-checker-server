@@ -37,7 +37,7 @@ let cronGlobal: cron.ScheduledTask | null = null;
 let lastFetched: Date | null = null;
 
 export const getCookie: () => Promise<NSEcookie | null> = async () => {
-    console.log('Getting new set of Cookies 6');
+    console.log('Getting new set of Cookies 7');
     const current = new Date();
     if (lastFetched && ((current as any) - (lastFetched as any) < 60 * 1000)) { // Retry new cookie every minute
         console.log('Cookie fetch already in progress');
