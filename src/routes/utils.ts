@@ -46,7 +46,7 @@ const commonHeaders = {
     'Accept-Encoding': 'gzip, deflate, br',
     'Accept-Language': 'en-US,*',
     'Connection': 'Keep-Alive',
-    'Referer': 'https://www.nseindia.com/',
+    'Referer': 'https://www.google.co.in',
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
@@ -63,7 +63,7 @@ let lastFetched: Date | null = null;
 export const getCookie: () => Promise<NSEcookie | null> = async () => {
     console.log('Getting new set of Cookies 1');
     const current = new Date();
-    if (lastFetched && ((current as any) - (lastFetched as any) < 60 * 1000)) { // Retry new cookie every minute
+    if (lastFetched && ((current as any) - (lastFetched as any) < 30 * 1000)) { // Retry new cookie every half nminute
         console.log('Cookie fetch already in progress');
         return null;
     }
@@ -71,6 +71,7 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
     lastFetched = new Date();
     let response: any;
     randomHeader = userHeaders[Math.floor(Math.random() * Math.floor(userHeaders.length))];
+    console.log('Header chosen', randomHeader);
     try {
         // response = await fetch('https://www.nseindia.com', {
         //     headers: { ...commonHeaders, credentials: 'include' },
