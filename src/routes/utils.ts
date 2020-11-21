@@ -78,8 +78,8 @@ async function getCookieUsingProxy(): Promise<any> {
             jar: cookieJar
         });
         console.log('Received response', response);
-        const cookies: string[] = response.headers['set-cookie'];
-        console.log('Coooooooookie', cookies);
+        // const cookies: string[] = response.headers['set-cookie'];
+        // console.log('Coooooooookie', cookies);
     } catch (err) {
         console.log('RFequest failed', err);
     }
