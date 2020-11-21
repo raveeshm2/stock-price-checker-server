@@ -114,8 +114,8 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
             jar: cookieJar
         });
     } catch (err) {
-        console.log('Error fetching cookie ', new Date().toLocaleTimeString());
-        console.log('err', err);
+        //      console.log('Error fetching cookie ', new Date().toLocaleTimeString());
+        //      console.log('err', err);
         return null;
     }
 
