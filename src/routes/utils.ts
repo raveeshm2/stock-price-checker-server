@@ -134,7 +134,7 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
             jar: cookieJar
         });
     } catch (err) {
-        console.log('Error fetching cookie ', new Date().toLocaleTimeString());
+        console.log('Error fetching cookie ', moment().utcOffset("+05:30").toISOString());
         if (process.env.NODE_ENV === "production") {
             console.log('Restarting dynos');
             await restartDynos();
