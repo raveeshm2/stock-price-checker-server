@@ -81,41 +81,33 @@ async function getCookieUsingProxy(): Promise<NSEcookie | null> {
     let response: any;
     randomHeader = getRandomHeader();
     try {
-        response = await Axios.get(`https://app.zenscrape.com/api/v1/get?&url=https://www.nseindia.com/market-data/live-equity-market&location=na`, {
+        response = await Axios.get(`https://app.zenscrape.com/api/v1/get?&url=https://www.nseindia.com/market-data/bonds-traded-in-capital-market`, {
             headers: {
                 'apiKey': process.env.API_SCRAPER_KEY!
             }
         });
-        console.log('Received response', response);
         const cookies = parseCookie(response.headers['set-cookie']);
-        console.log('Got Cookie from scraper API', cookies);
+        console.log('Got cookie from scraping', cookies);
         return cookies;
     } catch (err) {
-        console.log('RFequest failed', err);
+        console.log('Scraping Request failed', err);
         return null;
     }
 }
 
 export const getCookie: () => Promise<NSEcookie | null> = async () => {
-    console.log('Getting new set of Cookies 2');
+    console.log('Getting new set of Cookies');
     const current = new Date();
     if (lastFetched && ((current as any) - (lastFetched as any) < 30 * 1000)) { // Retry new cookie every half nminute
         console.log('Cookie fetch already in progress');
         return null;
     }
-    const cookieTest = await getCookieUsingProxy();
-    console.log('cookieTest', cookieTest);
-    return cookieTest;
+
     lastFetched = new Date();
     let response: any;
     randomHeader = getRandomHeader();
     console.log('Header chosen', randomHeader);
     try {
-        // response = await fetch('https://www.nseindia.com', {
-        //     headers: { ...commonHeaders, credentials: 'include' },
-        //     method: 'GET',
-        // });
-
         // Axios Request
         response = await Axios.get('https://www.nseindia.com', {
             headers: {
@@ -127,36 +119,14 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
             jar: cookieJar
         });
     } catch (err) {
-        //      console.log('Error fetching cookie ', new Date().toLocaleTimeString());
-        //      console.log('err', err);
-        return null;
+        console.log('Error fetching cookie ', new Date().toLocaleTimeString());
+        console.log('Trying to fetch cookie using scrape API');
+        const scrapedCookie = await getCookieUsingProxy();
+        return scrapedCookie;
     }
-
-    //Axios parsing
-    const cookies: string[] = response.headers['set-cookie'];
-    const parsed: any = cookies.reduce((acc, cook) => {
-        return {
-            ...acc,
-            ...cookie.parse(cook)
-        }
-    }, {});
-    console.log('Cookies received', parsed);
-    return {
-        nsit: parsed.nsit,
-        nseappid: parsed.nseappid
-    }
-
-    // console.log('headers', response.headers);
-    // const testCookie = response.headers.get('set-cookie');
-    // const nsit = testCookie.split('nsit=')[1].split(';')[0];
-    // const nseappid = testCookie.split('nseappid=')[1].split(';')[0];
-    // console.log('Cookie received nsit', nsit);
-    // console.log('Cookie received nseappid', nseappid);
-    // return {
-    //     nsit,
-    //     nseappid
-    // }
-
+    const cookies = parseCookie(response.headers['set-cookie']);
+    console.log("Recevived cookie using normal request", cookies);
+    return cookies;
 }
 
 export const getStockPrice: (symbol: string, cookies: NSEcookie) => Promise<string> = async (symbol: string, cookies: NSEcookie) => {
