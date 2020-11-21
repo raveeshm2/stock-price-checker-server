@@ -60,6 +60,21 @@ let cronGlobal: cron.ScheduledTask | null = null;
 // GLobal variable to stop fetching multiple cookies at the same time
 let lastFetched: Date | null = null;
 
+async function restartDynos() {
+    try {
+        const response = await Axios.delete(`https://api.heroku.com/apps/${process.env.APP_NAME}/dynos`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.heroku+json; version=3",
+                "Authorization": `Bearer ${process.env.AUTH_TOKEN!}`
+            }
+        });
+        return response;
+    } catch (err) {
+        console.log('err restarting', err);
+    }
+}
+
 function getRandomHeader() {
     return userHeaders[Math.floor(Math.random() * Math.floor(userHeaders.length))];
 }
@@ -77,23 +92,23 @@ function parseCookie(cookies: string[]): NSEcookie {
     }
 }
 
-async function getCookieUsingProxy(): Promise<NSEcookie | null> {
-    let response: any;
-    randomHeader = getRandomHeader();
-    try {
-        response = await Axios.get(`https://app.zenscrape.com/api/v1/get?&url=https://www.nseindia.com/market-data/bonds-traded-in-capital-market`, {
-            headers: {
-                'apiKey': process.env.API_SCRAPER_KEY!
-            }
-        });
-        const cookies = parseCookie(response.headers['set-cookie']);
-        console.log('Got cookie from scraping', cookies);
-        return cookies;
-    } catch (err) {
-        console.log('Scraping Request failed', err);
-        return null;
-    }
-}
+// async function getCookieUsingProxy(): Promise<NSEcookie | null> {
+//     let response: any;
+//     randomHeader = getRandomHeader();
+//     try {
+//         response = await Axios.get(`https://app.zenscrape.com/api/v1/get?&url=https://www.nseindia.com/market-data/bonds-traded-in-capital-market`, {
+//             headers: {
+//                 'apiKey': process.env.API_SCRAPER_KEY!
+//             }
+//         });
+//         const cookies = parseCookie(response.headers['set-cookie']);
+//         console.log('Got cookie from scraping', cookies);
+//         return cookies;
+//     } catch (err) {
+//         console.log('Scraping Request failed', err);
+//         return null;
+//     }
+// }
 
 export const getCookie: () => Promise<NSEcookie | null> = async () => {
     console.log('Getting new set of Cookies');
@@ -120,12 +135,14 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
         });
     } catch (err) {
         console.log('Error fetching cookie ', new Date().toLocaleTimeString());
-        console.log('Trying to fetch cookie using scrape API');
-        const scrapedCookie = await getCookieUsingProxy();
-        return scrapedCookie;
+        if (process.env.NODE_ENV === "production") {
+            console.log('Restarting dynos');
+            await restartDynos();
+        }
+        return null;
     }
     const cookies = parseCookie(response.headers['set-cookie']);
-    console.log("Recevived cookie using normal request", cookies);
+    console.log("Received cookie", cookies);
     return cookies;
 }
 
