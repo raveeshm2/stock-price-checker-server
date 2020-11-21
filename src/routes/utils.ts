@@ -68,7 +68,7 @@ async function getCookieUsingProxy(): Promise<any> {
     let response: any;
     randomHeader = getRandomHeader();
     try {
-        response = await Axios.get(`http://api.scrapestack.com/scrape?access_key=${process.env.API_SCRAPER_KEY}&url=https://www.nseindia.com&keep_headers=1`, {
+        response = await Axios.get(`http://api.scrapestack.com/scrape?access_key=${process.env.API_SCRAPER_KEY}&url=https://www.google.com&keep_headers=1`, {
             headers: {
                 ...commonHeaders,
                 'User-Agent': randomHeader
