@@ -68,14 +68,14 @@ async function getCookieUsingProxy(): Promise<any> {
     let response: any;
     randomHeader = getRandomHeader();
     try {
-        response = await Axios.get(`https://app.zenscrape.com/api/v1/get?&url=https://www.nseindia.com&location=na`, {
+        response = await Axios.get(`https://app.zenscrape.com/api/v1/get?&url=https://www.nseindia.com/market-data/live-equity-market&location=na`, {
             headers: {
-                ...commonHeaders,
-                'User-Agent': randomHeader,
+                // ...commonHeaders,
+                // 'User-Agent': randomHeader,
                 'apiKey': process.env.API_SCRAPER_KEY!
             },
-            withCredentials: true,
-            httpsAgent: agent
+            // withCredentials: true,
+            // httpsAgent: agent
         });
         console.log('Received response', response);
         const cookies: string[] = response.headers['set-cookie'];
