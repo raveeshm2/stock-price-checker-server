@@ -64,24 +64,35 @@ function getRandomHeader() {
     return userHeaders[Math.floor(Math.random() * Math.floor(userHeaders.length))];
 }
 
-async function getCookieUsingProxy(): Promise<any> {
+function parseCookie(cookies: string[]): NSEcookie {
+    const parsed: any = cookies.reduce((acc, cook) => {
+        return {
+            ...acc,
+            ...cookie.parse(cook)
+        }
+    }, {});
+    return {
+        nsit: parsed.nsit,
+        nseappid: parsed.nseappid
+    }
+}
+
+async function getCookieUsingProxy(): Promise<NSEcookie | null> {
     let response: any;
     randomHeader = getRandomHeader();
     try {
         response = await Axios.get(`https://app.zenscrape.com/api/v1/get?&url=https://www.nseindia.com/market-data/live-equity-market&location=na`, {
             headers: {
-                // ...commonHeaders,
-                // 'User-Agent': randomHeader,
                 'apiKey': process.env.API_SCRAPER_KEY!
-            },
-            // withCredentials: true,
-            // httpsAgent: agent
+            }
         });
         console.log('Received response', response);
-        const cookies: string[] = response.headers['set-cookie'];
-        console.log('Coooooooookie', cookies);
+        const cookies = parseCookie(response.headers['set-cookie']);
+        console.log('Got Cookie from scraper API', cookies);
+        return cookies;
     } catch (err) {
         console.log('RFequest failed', err);
+        return null;
     }
 }
 
@@ -92,7 +103,9 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
         console.log('Cookie fetch already in progress');
         return null;
     }
-    await getCookieUsingProxy();
+    const cookieTest = await getCookieUsingProxy();
+    console.log('cookieTest', cookieTest);
+    return cookieTest;
     lastFetched = new Date();
     let response: any;
     randomHeader = getRandomHeader();
