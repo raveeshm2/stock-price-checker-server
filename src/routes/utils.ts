@@ -60,6 +60,31 @@ let cronGlobal: cron.ScheduledTask | null = null;
 // GLobal variable to stop fetching multiple cookies at the same time
 let lastFetched: Date | null = null;
 
+function getRandomHeader() {
+    return userHeaders[Math.floor(Math.random() * Math.floor(userHeaders.length))];
+}
+
+async function getCookieUsingProxy(): Promise<any> {
+    let response: any;
+    randomHeader = getRandomHeader();
+    try {
+        response = await Axios.get(`http://api.scrapestack.com/scrape?access_key=${process.env.API_SCRAPER_KEY}&url=https://www.nseindia.com&proxy_location=in&keep_headers=1`, {
+            headers: {
+                ...commonHeaders,
+                'User-Agent': randomHeader
+            },
+            withCredentials: true,
+            httpsAgent: agent,
+            jar: cookieJar
+        });
+        console.log('Received response', response);
+        const cookies: string[] = response.headers['set-cookie'];
+        console.log('Coooooooookie', cookies);
+    } catch (err) {
+        console.log('RFequest failed', err);
+    }
+}
+
 export const getCookie: () => Promise<NSEcookie | null> = async () => {
     console.log('Getting new set of Cookies 2');
     const current = new Date();
@@ -67,10 +92,10 @@ export const getCookie: () => Promise<NSEcookie | null> = async () => {
         console.log('Cookie fetch already in progress');
         return null;
     }
-
+    await getCookieUsingProxy();
     lastFetched = new Date();
     let response: any;
-    randomHeader = userHeaders[Math.floor(Math.random() * Math.floor(userHeaders.length))];
+    randomHeader = getRandomHeader();
     console.log('Header chosen', randomHeader);
     try {
         // response = await fetch('https://www.nseindia.com', {
