@@ -20,10 +20,10 @@ checkForEnvironmentVariables();
 
 const app = express();
 
-if (process.env.NODE_ENV !== "production") {
-    app.use(cors({ credentials: true, origin: 'http://localhost:3000' })); // -> DEV server for hot reloading
-    // app.use(cors({ credentials: true, origin: 'http://localhost:5000' })); // -> Build for SW
-}
+//if (process.env.NODE_ENV !== "production") {
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' })); // -> DEV server for hot reloading
+// app.use(cors({ credentials: true, origin: 'http://localhost:5000' })); // -> Build for SW
+//}
 
 setUpVapidDetails();
 

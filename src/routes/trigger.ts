@@ -61,6 +61,23 @@ router.delete('/delete', async (req, res, next) => {
     next(new Error("Error deleting alert. Please try again later"));
 });
 
+router.delete('/delete/all', async (req, res, next) => {
+    const triggered: boolean = req.body.triggered || false;
+    const user = await userModel.findById(req.session!.userID);
+    if (!user) { return next(new Error("User not found")); }
+    const triggers = user.trigger;
+    if (!triggers || triggers.length === 0) return next(new Error("You don't have any alerts set!!"));
+    if (triggered) {
+        const updatedTriggers = triggers.filter(trigger => !trigger.isTriggered);
+        user.trigger = updatedTriggers;
+    } else {
+        // Delete all triggers;
+        user.trigger = []
+    }
+    await user.save();
+    return res.send({ message: ["Alerts deleted successfully"] });
+});
+
 router.put('/update', async (req, res, next) => {
     if (!req.body.id) {
         return next(new Error('Symbol ID not provided'));
