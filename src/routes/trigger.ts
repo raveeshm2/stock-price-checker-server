@@ -51,7 +51,6 @@ router.delete('/delete', async (req, res, next) => {
     const id = req.body.id;
     const triggers = user.trigger ? [...user.trigger] : [];
     const updatedTriggers = triggers.filter(trigger => trigger.id.toString() !== id);
-    console.log('updatedTriggers', updatedTriggers);
     if (updatedTriggers.length === triggers.length - 1) {
         user.trigger = updatedTriggers;
         await user.save();
@@ -62,12 +61,12 @@ router.delete('/delete', async (req, res, next) => {
 });
 
 router.delete('/delete/all', async (req, res, next) => {
-    const triggered: boolean = req.body.triggered || false;
+    const onlyTriggered: boolean = req.body.onlyTriggered || false;
     const user = await userModel.findById(req.session!.userID);
     if (!user) { return next(new Error("User not found")); }
     const triggers = user.trigger;
     if (!triggers || triggers.length === 0) return next(new Error("You don't have any alerts set!!"));
-    if (triggered) {
+    if (onlyTriggered) {
         const updatedTriggers = triggers.filter(trigger => !trigger.isTriggered);
         user.trigger = updatedTriggers;
     } else {

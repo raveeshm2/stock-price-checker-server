@@ -41,7 +41,7 @@ router.post('/login', async (req, res, next) => {
         const result = await bcrypt.compare(req.body.password, user!.password);
         if (result) {
             req.session!.userID = user._id;
-            req.session!.save((val: any) => console.log('State saved', val));
+            req.session!.save((val: any) => { });
             return res.status(200).send({ message: ["Login Successful !!"] });
         }
     } catch (err) {
