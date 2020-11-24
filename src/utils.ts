@@ -31,4 +31,8 @@ export function isStockMarketOpen(): boolean {
     return false;
 }
 
+export function roundOff2Places(num: number): number {
+    return Number(num.toFixed(2));
+}
+
 export default webPush;

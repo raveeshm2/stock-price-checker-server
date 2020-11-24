@@ -9,6 +9,7 @@ import authenticator from "./middlewares/authenticator";
 import UserRouter from "./routes/user";
 import SubscriptionRouter from "./routes/subscription";
 import TriggerRouter from "./routes/trigger";
+import HoldingRouter from "./routes/holding";
 import { setUpVapidDetails } from "./utils";
 import { HandleCRONJob } from "./routes/utils";
 import { checkForEnvironmentVariables } from "./common/util";
@@ -38,6 +39,8 @@ app.use('/stock', authenticator, StockRouter);
 app.use('/subscription', SubscriptionRouter);
 
 app.use('/trigger', authenticator, TriggerRouter);
+
+app.use('/holding', authenticator, HoldingRouter);
 
 HandleCRONJob();
 

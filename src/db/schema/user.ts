@@ -18,6 +18,13 @@ export interface TriggerModal {
     triggeredAt: string | null
 }
 
+export interface HoldingModel {
+    symbol: string,
+    avgPrice: number,
+    quantity: number,
+    totalInvested: number
+}
+
 export class user extends Typegoose {
 
     @prop({ required: true })
@@ -37,4 +44,7 @@ export class user extends Typegoose {
 
     @prop()
     subscription?: SubScriptionModel[]
+
+    @prop()
+    holdings?: HoldingModel[]
 }
