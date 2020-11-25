@@ -126,9 +126,13 @@ router.get('/list', async (req, res, next) => {
     const globalConfig = await globalModel.findOne({});
     (mappedInfo as any).total = { totalInvested, totalCurrentValue, totalProfit, totalProfitChange };
     (mappedInfo as any).today = { todayProfit, todayProfitChange };
-    (mappedInfo as any).isMarketOpen = { open: isStockMarketOpen(), change: globalConfig?.change }; // Hacky approach to use existing attributes for other purpose
+    (mappedInfo as any).isMarketOpen = { open: isStockMarketOpen(), change: globalConfig?.change };
+    const ordered = {};
+    Object.keys(mappedInfo).sort().forEach(key => {
+        (ordered as any)[key] = mappedInfo[key];
+    });
     await timeOut();
-    return res.send(mappedInfo);
+    return res.send(ordered);
 });
 
 export default router;
